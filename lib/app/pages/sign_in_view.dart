@@ -5,8 +5,11 @@ class SignInView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+      ),
+      body: const Center(
         child: TextButton(onPressed: null, child: Text("Sign-In")),
       ),
     );

@@ -11,7 +11,8 @@ class HomeScaffold extends StatefulWidget {
 }
 
 class _HomeScaffoldState extends State<HomeScaffold> {
-  bool _initializated = false;
+  final ValueNotifier<int> counter = ValueNotifier<int>(0);
+
   @override
   void initState() {
     super.initState();
@@ -19,9 +20,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
     WidgetsBinding.instance.addPostFrameCallback((
       _,
     ) {
-      setState(() {
-        _initializated = true;
-      });
+      counter.value++;
     });
   }
 
@@ -31,7 +30,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
     WidgetsBinding.instance.addPostFrameCallback((
       _,
     ) {
-      setState(() {});
+      counter.value++;
     });
   }
 
@@ -39,23 +38,31 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   Widget build(BuildContext context) {
     Navigator.canPop(context);
     return Scaffold(
-      appBar: AppBar(
-        //*Permite regresar a la pagina anterior
-        leading: _initializated && GoRouter.of(context).canPop()
-            ? BackButton(
-                onPressed: () {
-                  GoRouter.of(context).pop();
-                },
-              )
-            : null,
-        actions: [
-          IconButton(
-            onPressed: () {
-              GoRouter.of(context).pushNamed(Routes.profile);
-            },
-            icon: const Icon(Icons.person),
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ValueListenableBuilder<int>(
+          valueListenable: counter,
+          builder: (context, value, child) {
+            return AppBar(
+              //*Permite regresar a la pagina anterior
+              leading: value > 0 && GoRouter.of(context).canPop()
+                  ? BackButton(
+                      onPressed: () {
+                        GoRouter.of(context).pop();
+                      },
+                    )
+                  : null,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(Routes.profile);
+                  },
+                  icon: const Icon(Icons.person),
+                ),
+              ],
+            );
+          },
+        ),
       ),
       body: widget.child,
     );
