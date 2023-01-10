@@ -1,0 +1,63 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:navigator_deep_links/app/router/routes.dart';
+
+class HomeScaffold extends StatefulWidget {
+  const HomeScaffold({super.key, required this.child});
+  final Widget child;
+
+  @override
+  State<HomeScaffold> createState() => _HomeScaffoldState();
+}
+
+class _HomeScaffoldState extends State<HomeScaffold> {
+  bool _initializated = false;
+  @override
+  void initState() {
+    super.initState();
+    //*Verificar que el widget se renderee por lo menos una vez
+    WidgetsBinding.instance.addPostFrameCallback((
+      _,
+    ) {
+      setState(() {
+        _initializated = true;
+      });
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScaffold oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    WidgetsBinding.instance.addPostFrameCallback((
+      _,
+    ) {
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Navigator.canPop(context);
+    return Scaffold(
+      appBar: AppBar(
+        //*Permite regresar a la pagina anterior
+        leading: _initializated && GoRouter.of(context).canPop()
+            ? BackButton(
+                onPressed: () {
+                  GoRouter.of(context).pop();
+                },
+              )
+            : null,
+        actions: [
+          IconButton(
+            onPressed: () {
+              GoRouter.of(context).pushNamed(Routes.profile);
+            },
+            icon: const Icon(Icons.person),
+          ),
+        ],
+      ),
+      body: widget.child,
+    );
+  }
+}
